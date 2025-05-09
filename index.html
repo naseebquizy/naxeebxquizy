@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Naseeb Quizy</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      font-size: 2em;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
+    #access-section, #quiz-section, #result-section {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      display: none;
+    }
+    #access-section {
+      display: block;
+    }
+    .question-box {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .option {
+      background: #333;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .option:hover {
+      background-color: #0ff;
+      color: #000;
+    }
+    #timeline {
+      height: 10px;
+      background-color: #444;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    #bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0ff, #f0f);
+      animation: barAnim linear forwards;
+    }
+    @keyframes barAnim {
+      100% { width: 100%; }
+    }
+    #start-btn, #next-btn {
+      background-color: #0ff;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<header>Naseeb Quizy</header>
+
+<section id="access-section">
+  <h2>Enter Secret Code</h2>
+  <input type="text" id="secret-input" placeholder="Enter code..." />
+  <button onclick="checkCode()">Enter</button>
+</section>
+
+<section id="quiz-section">
+  <div id="timeline"><div id="bar"></div></div>
+  <div class="question-box" id="questionBox"></div>
+  <div id="options"></div>
+  <button id="next-btn" onclick="nextQuestion()">Next</button>
+</section>
+
+<section id="result-section">
+  <h2>Quiz Completed</h2>
+  <p id="score"></p>
+  <p id="time"></p>
+</section>
+
+<script>
+  const secretCode = "786"; // Change this secret code as needed
+  const access = document.getElementById("access-section");
+  const quiz = document.getElementById("quiz-section");
+  const result = document.getElementById("result-section");
+
+  function checkCode() {
+    const val = document.getElementById("secret-input").value;
+    if (val === secretCode) {
+      access.style.display = "none";
+      quiz.style.display = "block";
+      startQuiz();
+    } else {
+      alert("Wrong code!");
+    }
+  }
+
+  const questions = [
+    {
+      q: "What is the capital of France?",
+      options: ["Berlin", "Paris", "London", "Madrid"],
+      correct: 1
+    },
+    {
+      q: "Which language is used for web apps?",
+      options: ["Python", "PHP", "JavaScript", "All"],
+      correct: 3
+    },
+    {
+      q: "2 + 2 = ?",
+      options: ["3", "4", "5", "22"],
+      correct: 1
+    }
+  ];
+
+  let current = 0, scoreCount = 0;
+  let startTime, endTime;
+
+  function startQuiz() {
+    startTime = new Date();
+    document.getElementById("bar").style.animationDuration = (questions.length * 5) + "s";
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const q = questions[current];
+    document.getElementById("questionBox").innerText = (current+1) + ". " + q.q;
+    const opts = q.options.map((opt, i) => 
+      <div class="option" onclick="selectOption(${i})">${opt}</div>
+    ).join("");
+    document.getElementById("options").innerHTML = opts;
+  }
+
+  function selectOption(index) {
+    const correct = questions[current].correct;
+    if (index === correct) scoreCount++;
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    current++;
+    if (current < questions.length) {
+      loadQuestion();
+    } else {
+      endQuiz();
+    }
+  }
+
+  function endQuiz() {
+    endTime = new Date();
+    quiz.style.display = "none";
+    result.style.display = "block";
+    const timeTaken = Math.floor((endTime - startTime) / 1000);
+    document.getElementById("score").innerText = Score: ${scoreCount}/${questions.length};
+    document.getElementById("time").innerText = Time Taken: ${timeTaken} seconds;
+  }
+</script>
+
+</body>
+</html>
